@@ -14,12 +14,9 @@ import {AGENDA_CALENDAR_KNOB} from '../testIDs';
 
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
-//Fallback for react-native-web or when RN version is < 0.44
+// Fallback when RN version is < 0.44
 const {Text, View, Dimensions, Animated, ViewPropTypes} = ReactNative;
-const viewPropTypes =
-  typeof document !== 'undefined'
-    ? PropTypes.shape({style: PropTypes.object})
-    : ViewPropTypes || View.propTypes;
+const viewPropTypes = ViewPropTypes || View.propTypes;
 
 /**
  * @description: Agenda component
@@ -86,6 +83,8 @@ export default class AgendaView extends Component {
     onRefresh: PropTypes.func,
     /** Set this true while waiting for new data from a refresh. */
     refreshing: PropTypes.bool,
+    /** show one days items only */
+    showOneDayOnly:PropTypes.bool,
     /** Display loading indicator. Default = false */
     displayLoadingIndicator: PropTypes.bool,
     /** Called when the user begins dragging the agenda list. **/
@@ -309,6 +308,7 @@ export default class AgendaView extends Component {
         onMomentumScrollEnd={this.props.onMomentumScrollEnd}
         refreshControl={this.props.refreshControl}
         refreshing={this.props.refreshing}
+        showOneDayOnly={this.props.showOneDayOnly}
         onRefresh={this.props.onRefresh}
         rowHasChanged={this.props.rowHasChanged}
         renderItem={this.props.renderItem}
@@ -432,7 +432,7 @@ export default class AgendaView extends Component {
             <CalendarList
               onLayout={() => {
                 this.calendar.scrollToDay(this.state.selectedDay.clone(), this.calendarOffset(), false);
-              }}
+              }} 
               calendarWidth={this.viewWidth}
               theme={this.props.theme}
               onVisibleMonthsChange={this.onVisibleMonthsChange.bind(this)}

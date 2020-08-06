@@ -14,6 +14,8 @@ class ReservationList extends Component {
   static propTypes = {
     // specify your item comparison function for increased performance
     rowHasChanged: PropTypes.func,
+    //Show only one day's items at a time
+    showOneDayOnly:  PropTypes.bool,
     // specify how each item should be rendered in agenda
     renderItem: PropTypes.func,
     // specify how each date should be rendered. day can be undefined if the item is not first in that day.
@@ -174,13 +176,24 @@ class ReservationList extends Component {
     }
     const scrollPosition = reservations.length;
     const iterator = props.selectedDay.clone();
-    for (let i = 0; i < 31; i++) {
+    
+    if(this.props.showOneDayOnly){
       const res = this.getReservationsForDay(iterator, props);
       if (res) {
-        reservations = reservations.concat(res);
+        reservations = res;
       }
       iterator.addDays(1);
+    } else {
+      for (let i = 0; i < 5; i++) {
+        const res = this.getReservationsForDay(iterator, props);
+        if (res) {
+          reservations = reservations.concat(res);
+        }
+        iterator.addDays(1);
+      }
     }
+     
+    
 
     return {reservations, scrollPosition};
   }
@@ -209,6 +222,7 @@ class ReservationList extends Component {
         keyExtractor={(item, index) => String(index)}
         refreshControl={this.props.refreshControl}
         refreshing={this.props.refreshing || false}
+        showOneDayOnly={this.props.showOneDayOnly || false}
         onRefresh={this.props.onRefresh}
         onScrollBeginDrag={this.props.onScrollBeginDrag}
         onScrollEndDrag={this.props.onScrollEndDrag}
